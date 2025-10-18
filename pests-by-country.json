@@ -1,0 +1,763 @@
+{
+  "lastUpdated": "2025-10-18",
+  "countries": [
+    {
+      "name": "United States",
+      "code": "US",
+      "region": "North America",
+      "pests": [
+        {
+          "name": "Fall Armyworm",
+          "scientificName": "Spodoptera frugiperda",
+          "type": "insect",
+          "cropsAffected": ["corn", "sorghum", "cotton", "soybeans"],
+          "description": "Highly destructive pest that feeds on over 80 plant species",
+          "severity": "high"
+        },
+        {
+          "name": "Colorado Potato Beetle",
+          "scientificName": "Leptinotarsa decemlineata",
+          "type": "insect",
+          "cropsAffected": ["potato", "tomato", "eggplant"],
+          "description": "Major pest of potato crops, highly resistant to pesticides",
+          "severity": "high"
+        },
+        {
+          "name": "Corn Rootworm",
+          "scientificName": "Diabrotica spp.",
+          "type": "insect",
+          "cropsAffected": ["corn"],
+          "description": "Larvae feed on corn roots causing lodging and yield loss",
+          "severity": "high"
+        }
+      ]
+    },
+    {
+      "name": "India",
+      "code": "IN",
+      "region": "South Asia",
+      "pests": [
+        {
+          "name": "Pink Bollworm",
+          "scientificName": "Pectinophora gossypiella",
+          "type": "insect",
+          "cropsAffected": ["cotton"],
+          "description": "Major pest of cotton, larvae bore into cotton bolls",
+          "severity": "high"
+        },
+        {
+          "name": "Brown Planthopper",
+          "scientificName": "Nilaparvata lugens",
+          "type": "insect",
+          "cropsAffected": ["rice"],
+          "description": "Sucks sap from rice plants and transmits viruses",
+          "severity": "high"
+        },
+        {
+          "name": "Desert Locust",
+          "scientificName": "Schistocerca gregaria",
+          "type": "insect",
+          "cropsAffected": ["wheat", "barley", "sorghum", "millet", "rice"],
+          "description": "Highly destructive migratory pest forming massive swarms",
+          "severity": "critical"
+        }
+      ]
+    },
+    {
+      "name": "Brazil",
+      "code": "BR",
+      "region": "South America",
+      "pests": [
+        {
+          "name": "Soybean Rust",
+          "scientificName": "Phakopsora pachyrhizi",
+          "type": "fungal disease",
+          "cropsAffected": ["soybeans"],
+          "description": "Devastating fungal disease causing severe yield losses",
+          "severity": "critical"
+        },
+        {
+          "name": "Sugarcane Borer",
+          "scientificName": "Diatraea saccharalis",
+          "type": "insect",
+          "cropsAffected": ["sugarcane", "corn", "sorghum"],
+          "description": "Larvae bore into stalks causing damage and yield reduction",
+          "severity": "high"
+        },
+        {
+          "name": "Coffee Leaf Miner",
+          "scientificName": "Leucoptera coffeella",
+          "type": "insect",
+          "cropsAffected": ["coffee"],
+          "description": "Larvae mine coffee leaves reducing photosynthesis",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "name": "China",
+      "code": "CN",
+      "region": "East Asia",
+      "pests": [
+        {
+          "name": "Rice Blast",
+          "scientificName": "Magnaporthe oryzae",
+          "type": "fungal disease",
+          "cropsAffected": ["rice"],
+          "description": "Most destructive disease of rice worldwide",
+          "severity": "critical"
+        },
+        {
+          "name": "Asian Corn Borer",
+          "scientificName": "Ostrinia furnacalis",
+          "type": "insect",
+          "cropsAffected": ["corn", "sorghum"],
+          "description": "Major pest of corn in Asia, larvae bore into stalks",
+          "severity": "high"
+        },
+        {
+          "name": "Wheat Aphid",
+          "scientificName": "Sitobion avenae",
+          "type": "insect",
+          "cropsAffected": ["wheat", "barley"],
+          "description": "Sucks plant sap and transmits viral diseases",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "name": "Kenya",
+      "code": "KE",
+      "region": "East Africa",
+      "pests": [
+        {
+          "name": "Fall Armyworm",
+          "scientificName": "Spodoptera frugiperda",
+          "type": "insect",
+          "cropsAffected": ["maize", "sorghum"],
+          "description": "Invasive pest causing significant crop losses",
+          "severity": "critical"
+        },
+        {
+          "name": "Maize Stalk Borer",
+          "scientificName": "Busseola fusca",
+          "type": "insect",
+          "cropsAffected": ["maize", "sorghum"],
+          "description": "Endemic pest causing stem boring damage",
+          "severity": "high"
+        },
+        {
+          "name": "Coffee Berry Borer",
+          "scientificName": "Hypothenemus hampei",
+          "type": "insect",
+          "cropsAffected": ["coffee"],
+          "description": "Bores into coffee berries affecting quality and yield",
+          "severity": "high"
+        }
+      ]
+    },
+    {
+      "name": "Australia",
+      "code": "AU",
+      "region": "Oceania",
+      "pests": [
+        {
+          "name": "Helicoverpa",
+          "scientificName": "Helicoverpa armigera",
+          "type": "insect",
+          "cropsAffected": ["cotton", "chickpea", "sorghum", "corn"],
+          "description": "Polyphagous pest causing damage to many crops",
+          "severity": "high"
+        },
+        {
+          "name": "Russian Wheat Aphid",
+          "scientificName": "Diuraphis noxia",
+          "type": "insect",
+          "cropsAffected": ["wheat", "barley"],
+          "description": "Feeds on cereals and injects toxins while feeding",
+          "severity": "medium"
+        },
+        {
+          "name": "Queensland Fruit Fly",
+          "scientificName": "Bactrocera tryoni",
+          "type": "insect",
+          "cropsAffected": ["fruit trees", "vegetables"],
+          "description": "Major pest of fruit and vegetable production",
+          "severity": "high"
+        }
+      ]
+    },
+    {
+      "name": "France",
+      "code": "FR",
+      "region": "Western Europe",
+      "pests": [
+        {
+          "name": "European Corn Borer",
+          "scientificName": "Ostrinia nubilalis",
+          "type": "insect",
+          "cropsAffected": ["corn", "pepper", "tomato"],
+          "description": "Larvae bore into corn stalks and ears",
+          "severity": "medium"
+        },
+        {
+          "name": "Codling Moth",
+          "scientificName": "Cydia pomonella",
+          "type": "insect",
+          "cropsAffected": ["apple", "pear", "walnut"],
+          "description": "Major pest of pome fruits worldwide",
+          "severity": "high"
+        },
+        {
+          "name": "Grapevine Downy Mildew",
+          "scientificName": "Plasmopara viticola",
+          "type": "fungal disease",
+          "cropsAffected": ["grapes"],
+          "description": "Devastating disease of grapevines",
+          "severity": "high"
+        }
+      ]
+    },
+    {
+      "name": "Japan",
+      "code": "JP",
+      "region": "East Asia",
+      "pests": [
+        {
+          "name": "Rice Water Weevil",
+          "scientificName": "Lissorhoptrus oryzophilus",
+          "type": "insect",
+          "cropsAffected": ["rice"],
+          "description": "Larvae feed on rice roots in flooded paddies",
+          "severity": "medium"
+        },
+        {
+          "name": "Smaller Tea Tortrix",
+          "scientificName": "Adoxophyes honmai",
+          "type": "insect",
+          "cropsAffected": ["tea", "fruit trees"],
+          "description": "Larvae feed on leaves and shoots of tea plants",
+          "severity": "medium"
+        },
+        {
+          "name": "Rice Sheath Blight",
+          "scientificName": "Rhizoctonia solani",
+          "type": "fungal disease",
+          "cropsAffected": ["rice"],
+          "description": "Important disease of rice causing sheath and leaf lesions",
+          "severity": "high"
+        }
+      ]
+    },
+    {
+      "name": "Mexico",
+      "code": "MX",
+      "region": "North America",
+      "pests": [
+        {
+          "name": "Fall Armyworm",
+          "scientificName": "Spodoptera frugiperda",
+          "type": "insect",
+          "cropsAffected": ["maize", "sorghum", "rice"],
+          "description": "Native to Americas, major pest of corn",
+          "severity": "high"
+        },
+        {
+          "name": "Whitefly",
+          "scientificName": "Bemisia tabaci",
+          "type": "insect",
+          "cropsAffected": ["tomato", "bean", "cotton"],
+          "description": "Transmits viruses and causes direct feeding damage",
+          "severity": "high"
+        },
+        {
+          "name": "Coffee Leaf Rust",
+          "scientificName": "Hemileia vastatrix",
+          "type": "fungal disease",
+          "cropsAffected": ["coffee"],
+          "description": "Devastating disease causing defoliation",
+          "severity": "critical"
+        }
+      ]
+    },
+    {
+      "name": "South Africa",
+      "code": "ZA",
+      "region": "Southern Africa",
+      "pests": [
+        {
+          "name": "African Bollworm",
+          "scientificName": "Helicoverpa armigera",
+          "type": "insect",
+          "cropsAffected": ["cotton", "maize", "tomato", "chickpea"],
+          "description": "Polyphagous pest attacking many crops",
+          "severity": "high"
+        },
+        {
+          "name": "Russian Wheat Aphid",
+          "scientificName": "Diuraphis noxia",
+          "type": "insect",
+          "cropsAffected": ["wheat", "barley"],
+          "description": "Invasive pest causing toxicity in cereals",
+          "severity": "high"
+        },
+        {
+          "name": "Citrus Black Spot",
+          "scientificName": "Phyllosticta citricarpa",
+          "type": "fungal disease",
+          "cropsAffected": ["citrus"],
+          "description": "Major disease affecting citrus fruit quality",
+          "severity": "high"
+        }
+      ]
+    },
+    {
+      "name": "Argentina",
+      "code": "AR",
+      "region": "South America",
+      "pests": [
+        {
+          "name": "Soybean Stem Canker",
+          "scientificName": "Diaporthe phaseolorum",
+          "type": "fungal disease",
+          "cropsAffected": ["soybeans"],
+          "description": "Fungal disease causing stem lesions and plant death",
+          "severity": "high"
+        },
+        {
+          "name": "Sunflower Moth",
+          "scientificName": "Homoeosoma electellum",
+          "type": "insect",
+          "cropsAffected": ["sunflower"],
+          "description": "Larvae feed on sunflower seeds reducing yield and quality",
+          "severity": "medium"
+        },
+        {
+          "name": "Wheat Stem Sawfly",
+          "scientificName": "Cephus cinctus",
+          "type": "insect",
+          "cropsAffected": ["wheat", "barley"],
+          "description": "Larvae bore into stems causing lodging",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "name": "Indonesia",
+      "code": "ID",
+      "region": "Southeast Asia",
+      "pests": [
+        {
+          "name": "Rice Tungro Virus",
+          "scientificName": "Rice tungro bacilliform virus",
+          "type": "viral disease",
+          "cropsAffected": ["rice"],
+          "description": "Viral disease transmitted by leafhoppers causing stunting",
+          "severity": "critical"
+        },
+        {
+          "name": "Oil Palm Bunch Moth",
+          "scientificName": "Tirathaba rufivena",
+          "type": "insect",
+          "cropsAffected": ["oil palm"],
+          "description": "Larvae bore into oil palm fruits reducing yield",
+          "severity": "high"
+        },
+        {
+          "name": "Coconut Leaf Beetle",
+          "scientificName": "Brontispa longissima",
+          "type": "insect",
+          "cropsAffected": ["coconut", "oil palm"],
+          "description": "Scrapes leaf tissue causing yellowing and death",
+          "severity": "high"
+        }
+      ]
+    },
+    {
+      "name": "Thailand",
+      "code": "TH",
+      "region": "Southeast Asia",
+      "pests": [
+        {
+          "name": "Rice Gall Midge",
+          "scientificName": "Orseolia oryzae",
+          "type": "insect",
+          "cropsAffected": ["rice"],
+          "description": "Larvae induce galls in rice tillers preventing panicle formation",
+          "severity": "high"
+        },
+        {
+          "name": "Mango Hopper",
+          "scientificName": "Idioscopus clypealis",
+          "type": "insect",
+          "cropsAffected": ["mango"],
+          "description": "Sucks sap from mango inflorescences affecting fruit set",
+          "severity": "medium"
+        },
+        {
+          "name": "Cassava Mosaic Disease",
+          "scientificName": "Cassava mosaic virus",
+          "type": "viral disease",
+          "cropsAffected": ["cassava"],
+          "description": "Viral disease causing mosaic patterns and yield loss",
+          "severity": "critical"
+        }
+      ]
+    },
+    {
+      "name": "Nigeria",
+      "code": "NG",
+      "region": "West Africa",
+      "pests": [
+        {
+          "name": "Cassava Green Mite",
+          "scientificName": "Mononychellus tanajoa",
+          "type": "insect",
+          "cropsAffected": ["cassava"],
+          "description": "Mites cause leaf chlorosis and defoliation",
+          "severity": "high"
+        },
+        {
+          "name": "Yam Beetle",
+          "scientificName": "Heteroligus meles",
+          "type": "insect",
+          "cropsAffected": ["yam"],
+          "description": "Larvae bore into yam tubers causing rot",
+          "severity": "high"
+        },
+        {
+          "name": "Maize Streak Virus",
+          "scientificName": "Maize streak virus",
+          "type": "viral disease",
+          "cropsAffected": ["maize"],
+          "description": "Viral disease causing chlorotic streaks and stunting",
+          "severity": "critical"
+        }
+      ]
+    },
+    {
+      "name": "Egypt",
+      "code": "EG",
+      "region": "North Africa",
+      "pests": [
+        {
+          "name": "Cotton Leafworm",
+          "scientificName": "Spodoptera littoralis",
+          "type": "insect",
+          "cropsAffected": ["cotton", "vegetables", "maize"],
+          "description": "Polyphagous pest causing severe defoliation",
+          "severity": "high"
+        },
+        {
+          "name": "Wheat Stripe Rust",
+          "scientificName": "Puccinia striiformis",
+          "type": "fungal disease",
+          "cropsAffected": ["wheat", "barley"],
+          "description": "Fungal disease causing yellow striped pustules on leaves",
+          "severity": "critical"
+        },
+        {
+          "name": "Date Palm Borer",
+          "scientificName": "Oryctes elegans",
+          "type": "insect",
+          "cropsAffected": ["date palm"],
+          "description": "Beetles bore into palm crowns causing damage",
+          "severity": "high"
+        }
+      ]
+    },
+    {
+      "name": "Canada",
+      "code": "CA",
+      "region": "North America",
+      "pests": [
+        {
+          "name": "Wheat Midge",
+          "scientificName": "Sitodiplosis mosellana",
+          "type": "insect",
+          "cropsAffected": ["wheat"],
+          "description": "Larvae feed on developing wheat kernels reducing quality",
+          "severity": "high"
+        },
+        {
+          "name": "Canola Blackleg",
+          "scientificName": "Leptosphaeria maculans",
+          "type": "fungal disease",
+          "cropsAffected": ["canola", "rapeseed"],
+          "description": "Fungal disease causing stem cankers and lodging",
+          "severity": "critical"
+        },
+        {
+          "name": "Bertha Armyworm",
+          "scientificName": "Mamestra configurata",
+          "type": "insect",
+          "cropsAffected": ["canola", "flax", "mustard"],
+          "description": "Larvae defoliate canola and oilseed crops",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "name": "Germany",
+      "code": "DE",
+      "region": "Western Europe",
+      "pests": [
+        {
+          "name": "Wheat Blossom Midge",
+          "scientificName": "Sitodiplosis mosellana",
+          "type": "insect",
+          "cropsAffected": ["wheat"],
+          "description": "Larvae damage developing wheat grains",
+          "severity": "medium"
+        },
+        {
+          "name": "Potato Late Blight",
+          "scientificName": "Phytophthora infestans",
+          "type": "fungal disease",
+          "cropsAffected": ["potato", "tomato"],
+          "description": "Devastating disease causing rapid plant death",
+          "severity": "critical"
+        },
+        {
+          "name": "Rapeseed Pollen Beetle",
+          "scientificName": "Meligethes aeneus",
+          "type": "insect",
+          "cropsAffected": ["rapeseed", "canola"],
+          "description": "Beetles feed on buds and pollen affecting seed set",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "name": "Italy",
+      "code": "IT",
+      "region": "Southern Europe",
+      "pests": [
+        {
+          "name": "Olive Fruit Fly",
+          "scientificName": "Bactrocera oleae",
+          "type": "insect",
+          "cropsAffected": ["olive"],
+          "description": "Larvae feed on olive fruits reducing oil quality",
+          "severity": "critical"
+        },
+        {
+          "name": "Grape Phylloxera",
+          "scientificName": "Daktulosphaira vitifoliae",
+          "type": "insect",
+          "cropsAffected": ["grapes"],
+          "description": "Root pest causing vine decline and death",
+          "severity": "high"
+        },
+        {
+          "name": "Tomato Yellow Leaf Curl Virus",
+          "scientificName": "TYLCV",
+          "type": "viral disease",
+          "cropsAffected": ["tomato"],
+          "description": "Whitefly-transmitted virus causing severe yield loss",
+          "severity": "high"
+        }
+      ]
+    },
+    {
+      "name": "Spain",
+      "code": "ES",
+      "region": "Southern Europe",
+      "pests": [
+        {
+          "name": "Mediterranean Fruit Fly",
+          "scientificName": "Ceratitis capitata",
+          "type": "insect",
+          "cropsAffected": ["citrus", "stone fruits", "pome fruits"],
+          "description": "Major pest of fruit production worldwide",
+          "severity": "critical"
+        },
+        {
+          "name": "Olive Verticillium Wilt",
+          "scientificName": "Verticillium dahliae",
+          "type": "fungal disease",
+          "cropsAffected": ["olive"],
+          "description": "Soil-borne fungus causing wilting and tree death",
+          "severity": "high"
+        },
+        {
+          "name": "Rice Weevil",
+          "scientificName": "Sitophilus oryzae",
+          "type": "insect",
+          "cropsAffected": ["rice", "wheat", "stored grains"],
+          "description": "Storage pest damaging stored cereals",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "name": "Turkey",
+      "code": "TR",
+      "region": "Middle East",
+      "pests": [
+        {
+          "name": "Sunn Pest",
+          "scientificName": "Eurygaster integriceps",
+          "type": "insect",
+          "cropsAffected": ["wheat", "barley"],
+          "description": "Bug feeding causes grain quality deterioration",
+          "severity": "high"
+        },
+        {
+          "name": "Hazelnut Weevil",
+          "scientificName": "Curculio nucum",
+          "type": "insect",
+          "cropsAffected": ["hazelnut"],
+          "description": "Larvae feed on developing hazelnut kernels",
+          "severity": "high"
+        },
+        {
+          "name": "Cotton Whitefly",
+          "scientificName": "Bemisia tabaci",
+          "type": "insect",
+          "cropsAffected": ["cotton", "vegetables"],
+          "description": "Transmits viruses and causes direct damage",
+          "severity": "high"
+        }
+      ]
+    },
+    {
+      "name": "Pakistan",
+      "code": "PK",
+      "region": "South Asia",
+      "pests": [
+        {
+          "name": "Cotton Whitefly",
+          "scientificName": "Bemisia tabaci",
+          "type": "insect",
+          "cropsAffected": ["cotton"],
+          "description": "Major cotton pest transmitting leaf curl virus",
+          "severity": "critical"
+        },
+        {
+          "name": "Wheat Blast",
+          "scientificName": "Magnaporthe oryzae triticum",
+          "type": "fungal disease",
+          "cropsAffected": ["wheat"],
+          "description": "Emerging disease causing severe grain damage",
+          "severity": "critical"
+        },
+        {
+          "name": "Mango Mealybug",
+          "scientificName": "Drosicha mangiferae",
+          "type": "insect",
+          "cropsAffected": ["mango"],
+          "description": "Sucks sap from mango trees weakening plants",
+          "severity": "medium"
+        }
+      ]
+    },
+    {
+      "name": "Vietnam",
+      "code": "VN",
+      "region": "Southeast Asia",
+      "pests": [
+        {
+          "name": "Rice Brown Planthopper",
+          "scientificName": "Nilaparvata lugens",
+          "type": "insect",
+          "cropsAffected": ["rice"],
+          "description": "Sap-sucking pest transmitting viral diseases",
+          "severity": "high"
+        },
+        {
+          "name": "Coffee Berry Borer",
+          "scientificName": "Hypothenemus hampei",
+          "type": "insect",
+          "cropsAffected": ["coffee"],
+          "description": "Most damaging insect pest of coffee worldwide",
+          "severity": "critical"
+        },
+        {
+          "name": "Banana Bunchy Top Virus",
+          "scientificName": "BBTV",
+          "type": "viral disease",
+          "cropsAffected": ["banana"],
+          "description": "Aphid-transmitted virus causing plant stunting",
+          "severity": "high"
+        }
+      ]
+    },
+    {
+      "name": "Philippines",
+      "code": "PH",
+      "region": "Southeast Asia",
+      "pests": [
+        {
+          "name": "Rice Black Bug",
+          "scientificName": "Scotinophara coarctata",
+          "type": "insect",
+          "cropsAffected": ["rice"],
+          "description": "Sucks sap causing rice grains to be unfilled",
+          "severity": "high"
+        },
+        {
+          "name": "Coconut Scale Insect",
+          "scientificName": "Aspidiotus rigidus",
+          "type": "insect",
+          "cropsAffected": ["coconut"],
+          "description": "Scale insects weaken coconut palms",
+          "severity": "medium"
+        },
+        {
+          "name": "Banana Fusarium Wilt",
+          "scientificName": "Fusarium oxysporum f.sp. cubense",
+          "type": "fungal disease",
+          "cropsAffected": ["banana"],
+          "description": "Soil-borne disease causing plant death",
+          "severity": "critical"
+        }
+      ]
+    },
+    {
+      "name": "Colombia",
+      "code": "CO",
+      "region": "South America",
+      "pests": [
+        {
+          "name": "Coffee Leaf Rust",
+          "scientificName": "Hemileia vastatrix",
+          "type": "fungal disease",
+          "cropsAffected": ["coffee"],
+          "description": "Major disease causing defoliation and yield loss",
+          "severity": "critical"
+        },
+        {
+          "name": "Banana Weevil",
+          "scientificName": "Cosmopolites sordidus",
+          "type": "insect",
+          "cropsAffected": ["banana", "plantain"],
+          "description": "Larvae bore into banana pseudostems and rhizomes",
+          "severity": "high"
+        },
+        {
+          "name": "Black Sigatoka",
+          "scientificName": "Mycosphaerella fijiensis",
+          "type": "fungal disease",
+          "cropsAffected": ["banana", "plantain"],
+          "description": "Fungal disease causing leaf necrosis",
+          "severity": "high"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "totalCountries": 24,
+    "severityLevels": {
+      "critical": "Immediate action required, potential for widespread crop failure",
+      "high": "Significant economic impact, requires active management",
+      "medium": "Moderate impact, manageable with standard practices"
+    },
+    "pestTypes": {
+      "insect": "Insect pests including beetles, moths, aphids, etc.",
+      "fungal disease": "Diseases caused by fungal pathogens",
+      "bacterial disease": "Diseases caused by bacterial pathogens",
+      "viral disease": "Diseases transmitted by vectors or mechanically"
+    }
+  }
+}
