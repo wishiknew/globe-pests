@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Globe Pests - World Tour</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #fff;
+            color: #333;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        h1 {
+            position: absolute;
+            top: 20px;
+            left: 40px;
+            font-size: 2em;
+            font-weight: 300;
+        }
+
+        #globe-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #country-name {
+            position: absolute;
+            top: 80px;
+            left: 40px;
+            font-size: 1.5em;
+            font-weight: 400;
+            color: #666;
+        }
+
+        #pest-list {
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .pest-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            border-left: 3px solid #ccc;
+            opacity: 0;
+            transform: translateX(20px);
+            animation: slideIn 0.3s forwards;
+        }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .pest-item.critical {
+            border-left-color: #ff3333;
+        }
+
+        .pest-item.high {
+            border-left-color: #ff9933;
+        }
+
+        .pest-item.medium {
+            border-left-color: #ffcc33;
+        }
+
+        .pest-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .pest-scientific {
+            font-style: italic;
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .pest-crops {
+            font-size: 0.85em;
+            color: #888;
+        }
+
+        .country-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Global Agricultural Pests</h1>
+    <div id="country-name"></div>
+    <div id="pest-list"></div>
+    <div id="globe-container"></div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/topojson.v3.min.js"></script>
+    <script>
+        // Embedded pest data
+        const PESTS_DATA = {"lastUpdated":"2025-10-18","countries":[{"name":"United States","code":"US","region":"North America","pests":[{"name":"Fall Armyworm","scientificName":"Spodoptera frugiperda","type":"insect","cropsAffected":["corn","sorghum","cotton","soybeans"],"description":"Highly destructive pest that feeds on over 80 plant species","severity":"high"},{"name":"Colorado Potato Beetle","scientificName":"Leptinotarsa decemlineata","type":"insect","cropsAffected":["potato","tomato","eggplant"],"description":"Major pest of potato crops, highly resistant to pesticides","severity":"high"},{"name":"Corn Rootworm","scientificName":"Diabrotica spp.","type":"insect","cropsAffected":["corn"],"description":"Larvae feed on corn roots causing lodging and yield loss","severity":"high"}]},{"name":"India","code":"IN","region":"South Asia","pests":[{"name":"Pink Bollworm","scientificName":"Pectinophora gossypiella","type":"insect","cropsAffected":["cotton"],"description":"Major pest of cotton, larvae bore into cotton bolls","severity":"high"},{"name":"Brown Planthopper","scientificName":"Nilaparvata lugens","type":"insect","cropsAffected":["rice"],"description":"Sucks sap from rice plants and transmits viruses","severity":"high"},{"name":"Desert Locust","scientificName":"Schistocerca gregaria","type":"insect","cropsAffected":["wheat","barley","sorghum","millet","rice"],"description":"Highly destructive migratory pest forming massive swarms","severity":"critical"}]},{"name":"Brazil","code":"BR","region":"South America","pests":[{"name":"Soybean Rust","scientificName":"Phakopsora pachyrhizi","type":"fungal disease","cropsAffected":["soybeans"],"description":"Devastating fungal disease causing severe yield losses","severity":"critical"},{"name":"Sugarcane Borer","scientificName":"Diatraea saccharalis","type":"insect","cropsAffected":["sugarcane","corn","sorghum"],"description":"Larvae bore into stalks causing damage and yield reduction","severity":"high"},{"name":"Coffee Leaf Miner","scientificName":"Leucoptera coffeella","type":"insect","cropsAffected":["coffee"],"description":"Larvae mine coffee leaves reducing photosynthesis","severity":"medium"}]},{"name":"China","code":"CN","region":"East Asia","pests":[{"name":"Rice Blast","scientificName":"Magnaporthe oryzae","type":"fungal disease","cropsAffected":["rice"],"description":"Most destructive disease of rice worldwide","severity":"critical"},{"name":"Asian Corn Borer","scientificName":"Ostrinia furnacalis","type":"insect","cropsAffected":["corn","sorghum"],"description":"Major pest of corn in Asia, larvae bore into stalks","severity":"high"},{"name":"Wheat Aphid","scientificName":"Sitobion avenae","type":"insect","cropsAffected":["wheat","barley"],"description":"Sucks plant sap and transmits viral diseases","severity":"medium"}]},{"name":"Kenya","code":"KE","region":"East Africa","pests":[{"name":"Fall Armyworm","scientificName":"Spodoptera frugiperda","type":"insect","cropsAffected":["maize","sorghum"],"description":"Invasive pest causing significant crop losses","severity":"critical"},{"name":"Maize Stalk Borer","scientificName":"Busseola fusca","type":"insect","cropsAffected":["maize","sorghum"],"description":"Endemic pest causing stem boring damage","severity":"high"},{"name":"Coffee Berry Borer","scientificName":"Hypothenemus hampei","type":"insect","cropsAffected":["coffee"],"description":"Bores into coffee berries affecting quality and yield","severity":"high"}]},{"name":"Australia","code":"AU","region":"Oceania","pests":[{"name":"Helicoverpa","scientificName":"Helicoverpa armigera","type":"insect","cropsAffected":["cotton","chickpea","sorghum","corn"],"description":"Polyphagous pest causing damage to many crops","severity":"high"},{"name":"Russian Wheat Aphid","scientificName":"Diuraphis noxia","type":"insect","cropsAffected":["wheat","barley"],"description":"Feeds on cereals and injects toxins while feeding","severity":"medium"},{"name":"Queensland Fruit Fly","scientificName":"Bactrocera tryoni","type":"insect","cropsAffected":["fruit trees","vegetables"],"description":"Major pest of fruit and vegetable production","severity":"high"}]},{"name":"France","code":"FR","region":"Western Europe","pests":[{"name":"European Corn Borer","scientificName":"Ostrinia nubilalis","type":"insect","cropsAffected":["corn","pepper","tomato"],"description":"Larvae bore into corn stalks and ears","severity":"medium"},{"name":"Codling Moth","scientificName":"Cydia pomonella","type":"insect","cropsAffected":["apple","pear","walnut"],"description":"Major pest of pome fruits worldwide","severity":"high"},{"name":"Grapevine Downy Mildew","scientificName":"Plasmopara viticola","type":"fungal disease","cropsAffected":["grapes"],"description":"Devastating disease of grapevines","severity":"high"}]},{"name":"Japan","code":"JP","region":"East Asia","pests":[{"name":"Rice Water Weevil","scientificName":"Lissorhoptrus oryzophilus","type":"insect","cropsAffected":["rice"],"description":"Larvae feed on rice roots in flooded paddies","severity":"medium"},{"name":"Smaller Tea Tortrix","scientificName":"Adoxophyes honmai","type":"insect","cropsAffected":["tea","fruit trees"],"description":"Larvae feed on leaves and shoots of tea plants","severity":"medium"},{"name":"Rice Sheath Blight","scientificName":"Rhizoctonia solani","type":"fungal disease","cropsAffected":["rice"],"description":"Important disease of rice causing sheath and leaf lesions","severity":"high"}]},{"name":"Mexico","code":"MX","region":"North America","pests":[{"name":"Fall Armyworm","scientificName":"Spodoptera frugiperda","type":"insect","cropsAffected":["maize","sorghum","rice"],"description":"Native to Americas, major pest of corn","severity":"high"},{"name":"Whitefly","scientificName":"Bemisia tabaci","type":"insect","cropsAffected":["tomato","bean","cotton"],"description":"Transmits viruses and causes direct feeding damage","severity":"high"},{"name":"Coffee Leaf Rust","scientificName":"Hemileia vastatrix","type":"fungal disease","cropsAffected":["coffee"],"description":"Devastating disease causing defoliation","severity":"critical"}]},{"name":"South Africa","code":"ZA","region":"Southern Africa","pests":[{"name":"African Bollworm","scientificName":"Helicoverpa armigera","type":"insect","cropsAffected":["cotton","maize","tomato","chickpea"],"description":"Polyphagous pest attacking many crops","severity":"high"},{"name":"Russian Wheat Aphid","scientificName":"Diuraphis noxia","type":"insect","cropsAffected":["wheat","barley"],"description":"Invasive pest causing toxicity in cereals","severity":"high"},{"name":"Citrus Black Spot","scientificName":"Phyllosticta citricarpa","type":"fungal disease","cropsAffected":["citrus"],"description":"Major disease affecting citrus fruit quality","severity":"high"}]},{"name":"Argentina","code":"AR","region":"South America","pests":[{"name":"Soybean Stem Canker","scientificName":"Diaporthe phaseolorum","type":"fungal disease","cropsAffected":["soybeans"],"description":"Fungal disease causing stem lesions and plant death","severity":"high"},{"name":"Sunflower Moth","scientificName":"Homoeosoma electellum","type":"insect","cropsAffected":["sunflower"],"description":"Larvae feed on sunflower seeds reducing yield and quality","severity":"medium"},{"name":"Wheat Stem Sawfly","scientificName":"Cephus cinctus","type":"insect","cropsAffected":["wheat","barley"],"description":"Larvae bore into stems causing lodging","severity":"medium"}]},{"name":"Indonesia","code":"ID","region":"Southeast Asia","pests":[{"name":"Rice Tungro Virus","scientificName":"Rice tungro bacilliform virus","type":"viral disease","cropsAffected":["rice"],"description":"Viral disease transmitted by leafhoppers causing stunting","severity":"critical"},{"name":"Oil Palm Bunch Moth","scientificName":"Tirathaba rufivena","type":"insect","cropsAffected":["oil palm"],"description":"Larvae bore into oil palm fruits reducing yield","severity":"high"},{"name":"Coconut Leaf Beetle","scientificName":"Brontispa longissima","type":"insect","cropsAffected":["coconut","oil palm"],"description":"Scrapes leaf tissue causing yellowing and death","severity":"high"}]},{"name":"Thailand","code":"TH","region":"Southeast Asia","pests":[{"name":"Rice Gall Midge","scientificName":"Orseolia oryzae","type":"insect","cropsAffected":["rice"],"description":"Larvae induce galls in rice tillers preventing panicle formation","severity":"high"},{"name":"Mango Hopper","scientificName":"Idioscopus clypealis","type":"insect","cropsAffected":["mango"],"description":"Sucks sap from mango inflorescences affecting fruit set","severity":"medium"},{"name":"Cassava Mosaic Disease","scientificName":"Cassava mosaic virus","type":"viral disease","cropsAffected":["cassava"],"description":"Viral disease causing mosaic patterns and yield loss","severity":"critical"}]},{"name":"Nigeria","code":"NG","region":"West Africa","pests":[{"name":"Cassava Green Mite","scientificName":"Mononychellus tanajoa","type":"insect","cropsAffected":["cassava"],"description":"Mites cause leaf chlorosis and defoliation","severity":"high"},{"name":"Yam Beetle","scientificName":"Heteroligus meles","type":"insect","cropsAffected":["yam"],"description":"Larvae bore into yam tubers causing rot","severity":"high"},{"name":"Maize Streak Virus","scientificName":"Maize streak virus","type":"viral disease","cropsAffected":["maize"],"description":"Viral disease causing chlorotic streaks and stunting","severity":"critical"}]},{"name":"Egypt","code":"EG","region":"North Africa","pests":[{"name":"Cotton Leafworm","scientificName":"Spodoptera littoralis","type":"insect","cropsAffected":["cotton","vegetables","maize"],"description":"Polyphagous pest causing severe defoliation","severity":"high"},{"name":"Wheat Stripe Rust","scientificName":"Puccinia striiformis","type":"fungal disease","cropsAffected":["wheat","barley"],"description":"Fungal disease causing yellow striped pustules on leaves","severity":"critical"},{"name":"Date Palm Borer","scientificName":"Oryctes elegans","type":"insect","cropsAffected":["date palm"],"description":"Beetles bore into palm crowns causing damage","severity":"high"}]},{"name":"Canada","code":"CA","region":"North America","pests":[{"name":"Wheat Midge","scientificName":"Sitodiplosis mosellana","type":"insect","cropsAffected":["wheat"],"description":"Larvae feed on developing wheat kernels reducing quality","severity":"high"},{"name":"Canola Blackleg","scientificName":"Leptosphaeria maculans","type":"fungal disease","cropsAffected":["canola","rapeseed"],"description":"Fungal disease causing stem cankers and lodging","severity":"critical"},{"name":"Bertha Armyworm","scientificName":"Mamestra configurata","type":"insect","cropsAffected":["canola","flax","mustard"],"description":"Larvae defoliate canola and oilseed crops","severity":"medium"}]},{"name":"Germany","code":"DE","region":"Western Europe","pests":[{"name":"Wheat Blossom Midge","scientificName":"Sitodiplosis mosellana","type":"insect","cropsAffected":["wheat"],"description":"Larvae damage developing wheat grains","severity":"medium"},{"name":"Potato Late Blight","scientificName":"Phytophthora infestans","type":"fungal disease","cropsAffected":["potato","tomato"],"description":"Devastating disease causing rapid plant death","severity":"critical"},{"name":"Rapeseed Pollen Beetle","scientificName":"Meligethes aeneus","type":"insect","cropsAffected":["rapeseed","canola"],"description":"Beetles feed on buds and pollen affecting seed set","severity":"medium"}]},{"name":"Italy","code":"IT","region":"Southern Europe","pests":[{"name":"Olive Fruit Fly","scientificName":"Bactrocera oleae","type":"insect","cropsAffected":["olive"],"description":"Larvae feed on olive fruits reducing oil quality","severity":"critical"},{"name":"Grape Phylloxera","scientificName":"Daktulosphaira vitifoliae","type":"insect","cropsAffected":["grapes"],"description":"Root pest causing vine decline and death","severity":"high"},{"name":"Tomato Yellow Leaf Curl Virus","scientificName":"TYLCV","type":"viral disease","cropsAffected":["tomato"],"description":"Whitefly-transmitted virus causing severe yield loss","severity":"high"}]},{"name":"Spain","code":"ES","region":"Southern Europe","pests":[{"name":"Mediterranean Fruit Fly","scientificName":"Ceratitis capitata","type":"insect","cropsAffected":["citrus","stone fruits","pome fruits"],"description":"Major pest of fruit production worldwide","severity":"critical"},{"name":"Olive Verticillium Wilt","scientificName":"Verticillium dahliae","type":"fungal disease","cropsAffected":["olive"],"description":"Soil-borne fungus causing wilting and tree death","severity":"high"},{"name":"Rice Weevil","scientificName":"Sitophilus oryzae","type":"insect","cropsAffected":["rice","wheat","stored grains"],"description":"Storage pest damaging stored cereals","severity":"medium"}]},{"name":"Turkey","code":"TR","region":"Middle East","pests":[{"name":"Sunn Pest","scientificName":"Eurygaster integriceps","type":"insect","cropsAffected":["wheat","barley"],"description":"Bug feeding causes grain quality deterioration","severity":"high"},{"name":"Hazelnut Weevil","scientificName":"Curculio nucum","type":"insect","cropsAffected":["hazelnut"],"description":"Larvae feed on developing hazelnut kernels","severity":"high"},{"name":"Cotton Whitefly","scientificName":"Bemisia tabaci","type":"insect","cropsAffected":["cotton","vegetables"],"description":"Transmits viruses and causes direct damage","severity":"high"}]},{"name":"Pakistan","code":"PK","region":"South Asia","pests":[{"name":"Cotton Whitefly","scientificName":"Bemisia tabaci","type":"insect","cropsAffected":["cotton"],"description":"Major cotton pest transmitting leaf curl virus","severity":"critical"},{"name":"Wheat Blast","scientificName":"Magnaporthe oryzae triticum","type":"fungal disease","cropsAffected":["wheat"],"description":"Emerging disease causing severe grain damage","severity":"critical"},{"name":"Mango Mealybug","scientificName":"Drosicha mangiferae","type":"insect","cropsAffected":["mango"],"description":"Sucks sap from mango trees weakening plants","severity":"medium"}]},{"name":"Vietnam","code":"VN","region":"Southeast Asia","pests":[{"name":"Rice Brown Planthopper","scientificName":"Nilaparvata lugens","type":"insect","cropsAffected":["rice"],"description":"Sap-sucking pest transmitting viral diseases","severity":"high"},{"name":"Coffee Berry Borer","scientificName":"Hypothenemus hampei","type":"insect","cropsAffected":["coffee"],"description":"Most damaging insect pest of coffee worldwide","severity":"critical"},{"name":"Banana Bunchy Top Virus","scientificName":"BBTV","type":"viral disease","cropsAffected":["banana"],"description":"Aphid-transmitted virus causing plant stunting","severity":"high"}]},{"name":"Philippines","code":"PH","region":"Southeast Asia","pests":[{"name":"Rice Black Bug","scientificName":"Scotinophara coarctata","type":"insect","cropsAffected":["rice"],"description":"Sucks sap causing rice grains to be unfilled","severity":"high"},{"name":"Coconut Scale Insect","scientificName":"Aspidiotus rigidus","type":"insect","cropsAffected":["coconut"],"description":"Scale insects weaken coconut palms","severity":"medium"},{"name":"Banana Fusarium Wilt","scientificName":"Fusarium oxysporum f.sp. cubense","type":"fungal disease","cropsAffected":["banana"],"description":"Soil-borne disease causing plant death","severity":"critical"}]},{"name":"Colombia","code":"CO","region":"South America","pests":[{"name":"Coffee Leaf Rust","scientificName":"Hemileia vastatrix","type":"fungal disease","cropsAffected":["coffee"],"description":"Major disease causing defoliation and yield loss","severity":"critical"},{"name":"Banana Weevil","scientificName":"Cosmopolites sordidus","type":"insect","cropsAffected":["banana","plantain"],"description":"Larvae bore into banana pseudostems and rhizomes","severity":"high"},{"name":"Black Sigatoka","scientificName":"Mycosphaerella fijiensis","type":"fungal disease","cropsAffected":["banana","plantain"],"description":"Fungal disease causing leaf necrosis","severity":"high"}]}],"metadata":{"totalCountries":24,"severityLevels":{"critical":"Immediate action required, potential for widespread crop failure","high":"Significant economic impact, requires active management","medium":"Moderate impact, manageable with standard practices"},"pestTypes":{"insect":"Insect pests including beetles, moths, aphids, etc.","fungal disease":"Diseases caused by fungal pathogens","bacterial disease":"Diseases caused by bacterial pathogens","viral disease":"Diseases transmitted by vectors or mechanically"}}};
+    </script>
+    <script>
+        // Versor class for smooth quaternion-based rotation interpolation
+        class Versor {
+            static fromAngles([l, p, g]) {
+                l *= Math.PI / 360;
+                p *= Math.PI / 360;
+                g *= Math.PI / 360;
+                const sl = Math.sin(l), cl = Math.cos(l);
+                const sp = Math.sin(p), cp = Math.cos(p);
+                const sg = Math.sin(g), cg = Math.cos(g);
+                return [
+                    cl * cp * cg + sl * sp * sg,
+                    sl * cp * cg - cl * sp * sg,
+                    cl * sp * cg + sl * cp * sg,
+                    cl * cp * sg - sl * sp * cg
+                ];
+            }
+            static toAngles([a, b, c, d]) {
+                return [
+                    Math.atan2(2 * (a * b + c * d), 1 - 2 * (b * b + c * c)) * 180 / Math.PI,
+                    Math.asin(Math.max(-1, Math.min(1, 2 * (a * c - d * b)))) * 180 / Math.PI,
+                    Math.atan2(2 * (a * d + b * c), 1 - 2 * (c * c + d * d)) * 180 / Math.PI
+                ];
+            }
+            static interpolateAngles(a, b) {
+                const i = Versor.interpolate(Versor.fromAngles(a), Versor.fromAngles(b));
+                return t => Versor.toAngles(i(t));
+            }
+            static interpolateLinear([a1, b1, c1, d1], [a2, b2, c2, d2]) {
+                a2 -= a1, b2 -= b1, c2 -= c1, d2 -= d1;
+                const x = new Array(4);
+                return t => {
+                    const l = Math.hypot(x[0] = a1 + a2 * t, x[1] = b1 + b2 * t, x[2] = c1 + c2 * t, x[3] = d1 + d2 * t);
+                    x[0] /= l, x[1] /= l, x[2] /= l, x[3] /= l;
+                    return x;
+                };
+            }
+            static interpolate([a1, b1, c1, d1], [a2, b2, c2, d2]) {
+                let dot = a1 * a2 + b1 * b2 + c1 * c2 + d1 * d2;
+                if (dot < 0) a2 = -a2, b2 = -b2, c2 = -c2, d2 = -d2, dot = -dot;
+                if (dot > 0.9995) return Versor.interpolateLinear([a1, b1, c1, d1], [a2, b2, c2, d2]);
+                const theta0 = Math.acos(Math.max(-1, Math.min(1, dot)));
+                const x = new Array(4);
+                const l = Math.hypot(a2 -= a1 * dot, b2 -= b1 * dot, c2 -= c1 * dot, d2 -= d1 * dot);
+                a2 /= l, b2 /= l, c2 /= l, d2 /= l;
+                return t => {
+                    const theta = theta0 * t;
+                    const s = Math.sin(theta);
+                    const c = Math.cos(theta);
+                    x[0] = a1 * c + a2 * s;
+                    x[1] = b1 * c + b2 * s;
+                    x[2] = c1 * c + c2 * s;
+                    x[3] = d1 * c + d2 * s;
+                    return x;
+                };
+            }
+        }
+    </script>
+    <script>
+        const container = document.getElementById('globe-container');
+        const countryNameDiv = document.getElementById('country-name');
+
+        // Dimensions
+        const width = window.innerWidth;
+        const height = Math.min(window.innerHeight, 720);
+
+        // Prepare canvas
+        const dpr = window.devicePixelRatio || 1;
+        const canvas = d3.create("canvas")
+            .attr("width", dpr * width)
+            .attr("height", dpr * height)
+            .style("width", `${width}px`);
+
+        container.appendChild(canvas.node());
+
+        const context = canvas.node().getContext("2d");
+        context.scale(dpr, dpr);
+
+        // Create projection and path generator
+        const projection = d3.geoOrthographic()
+            .fitExtent([[10, 10], [width - 10, height - 10]], {type: "Sphere"});
+
+        const path = d3.geoPath(projection, context);
+        const tilt = 20;
+
+        // Load data
+        let world, land, borders, countries, pestsData;
+        const pestListDiv = document.getElementById('pest-list');
+
+        // Country ID to ISO code mapping
+        const idToCode = {
+            840: 'US', 356: 'IN', 76: 'BR', 156: 'CN', 404: 'KE',
+            36: 'AU', 250: 'FR', 392: 'JP', 484: 'MX', 710: 'ZA',
+            32: 'AR', 360: 'ID', 764: 'TH', 566: 'NG', 818: 'EG',
+            124: 'CA', 276: 'DE', 380: 'IT', 724: 'ES', 792: 'TR',
+            586: 'PK', 704: 'VN', 608: 'PH', 170: 'CO'
+        };
+
+        Promise.all([
+            d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+        ]).then(([worldData]) => {
+            world = worldData;
+            land = topojson.feature(world, world.objects.land);
+            borders = topojson.mesh(world, world.objects.countries, (a, b) => a !== b);
+            countries = topojson.feature(world, world.objects.countries).features;
+            pestsData = PESTS_DATA;
+
+            // Filter to only countries with pest data
+            countries = countries.filter(country => {
+                const code = idToCode[country.id];
+                return code && pestsData.countries.some(c => c.code === code);
+            });
+
+            console.log('Loaded', countries.length, 'countries with pest data');
+
+            // Start the tour
+            startTour();
+        }).catch(error => {
+            console.error('Error loading data:', error);
+            countryNameDiv.textContent = 'Error loading data';
+        });
+
+        function render(country, arc) {
+            context.clearRect(0, 0, width, height);
+
+            // Draw land (grey)
+            context.beginPath();
+            path(land);
+            context.fillStyle = "#ccc";
+            context.fill();
+
+            // Draw current country (red)
+            context.beginPath();
+            path(country);
+            context.fillStyle = "#f00";
+            context.fill();
+
+            // Draw borders (white)
+            context.beginPath();
+            path(borders);
+            context.strokeStyle = "#fff";
+            context.lineWidth = 0.5;
+            context.stroke();
+
+            // Draw sphere outline (black)
+            context.beginPath();
+            path({type: "Sphere"});
+            context.strokeStyle = "#000";
+            context.lineWidth = 1.5;
+            context.stroke();
+
+            // Draw arc if provided
+            if (arc) {
+                context.beginPath();
+                path(arc);
+                context.strokeStyle = "#000";
+                context.lineWidth = 1;
+                context.stroke();
+            }
+        }
+
+        async function showPests(countryCode) {
+            const countryPests = pestsData.countries.find(c => c.code === countryCode);
+            if (!countryPests) {
+                pestListDiv.innerHTML = '';
+                return;
+            }
+
+            pestListDiv.innerHTML = `<div class="country-title">${countryPests.name}</div>`;
+
+            // Show pests one by one with delay
+            for (let i = 0; i < countryPests.pests.length; i++) {
+                await new Promise(resolve => setTimeout(resolve, 300));
+
+                const pest = countryPests.pests[i];
+                const pestDiv = document.createElement('div');
+                pestDiv.className = `pest-item ${pest.severity}`;
+                pestDiv.innerHTML = `
+                    <div class="pest-name">${pest.name}</div>
+                    <div class="pest-scientific">${pest.scientificName}</div>
+                    <div class="pest-crops">Affects: ${pest.cropsAffected.join(', ')}</div>
+                `;
+                pestListDiv.appendChild(pestDiv);
+            }
+        }
+
+        async function startTour() {
+            console.log('Starting tour...');
+
+            let p1, p2 = [0, 0], r1, r2 = [0, 0, 0];
+
+            // Infinite loop
+            while (true) {
+                for (const country of countries) {
+                    const countryCode = idToCode[country.id];
+
+                    console.log('Visiting:', country.properties.name);
+
+                    // Update country name
+                    countryNameDiv.textContent = country.properties.name;
+
+                    // Clear pest list
+                    pestListDiv.innerHTML = '';
+
+                    // Render current country
+                    render(country);
+
+                    // Calculate positions for transition
+                    p1 = p2;
+                    p2 = d3.geoCentroid(country);
+                    r1 = r2;
+                    r2 = [-p2[0], tilt - p2[1], 0];
+
+                    const ip = d3.geoInterpolate(p1, p2);
+                    const iv = Versor.interpolateAngles(r1, r2);
+
+                    // Transition to country with animation
+                    try {
+                        await d3.transition()
+                            .duration(1250)
+                            .tween("render", () => t => {
+                                projection.rotate(iv(t));
+                                render(country, {type: "LineString", coordinates: [p1, ip(t)]});
+                            })
+                            .end();
+                    } catch(e) {
+                        console.log('Transition interrupted');
+                    }
+
+                    // Show pests for this country
+                    if (countryCode) {
+                        await showPests(countryCode);
+                    }
+
+                    // Wait before moving to next country
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                }
+            }
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            location.reload();
+        });
+    </script>
+</body>
+</html>
