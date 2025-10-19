@@ -30,6 +30,23 @@
             left: 40px;
             font-size: 2em;
             font-weight: 300;
+            z-index: 2;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5em;
+                left: 20px;
+                top: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.2em;
+                left: 15px;
+                top: 10px;
+            }
         }
 
         #globe-container {
@@ -43,6 +60,11 @@
 
         canvas {
             display: block;
+            cursor: grab;
+        }
+
+        canvas:active {
+            cursor: grabbing;
         }
 
         #country-name {
@@ -52,6 +74,23 @@
             font-size: 1.5em;
             font-weight: 400;
             color: #666;
+            z-index: 2;
+        }
+
+        @media (max-width: 768px) {
+            #country-name {
+                font-size: 1.2em;
+                left: 20px;
+                top: 60px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #country-name {
+                font-size: 1em;
+                left: 15px;
+                top: 45px;
+            }
         }
 
         #pest-list {
@@ -64,6 +103,38 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 5;
+        }
+
+        @media (max-width: 1024px) {
+            #pest-list {
+                right: 20px;
+                max-width: 350px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #pest-list {
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                right: 20px;
+                top: auto;
+                transform: none;
+                max-width: none;
+                max-height: 40vh;
+                overflow-y: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #pest-list {
+                bottom: 10px;
+                left: 10px;
+                right: 10px;
+                padding: 15px;
+                max-height: 35vh;
+            }
         }
 
         .pest-item {
@@ -119,6 +190,30 @@
             font-weight: 600;
             margin-bottom: 12px;
             color: #333;
+        }
+
+        @media (max-width: 480px) {
+            .pest-item {
+                padding: 10px;
+                margin-bottom: 6px;
+            }
+
+            .pest-name {
+                font-size: 0.95em;
+            }
+
+            .pest-scientific {
+                font-size: 0.85em;
+            }
+
+            .pest-crops {
+                font-size: 0.8em;
+            }
+
+            .country-title {
+                font-size: 1.1em;
+                margin-bottom: 10px;
+            }
         }
     </style>
 </head>
@@ -232,6 +327,14 @@
             586: 'PK', 704: 'VN', 608: 'PH', 170: 'CO'
         };
 
+        // State variables for interaction
+        let isDragging = false;
+        let tourPaused = false;
+        let inactivityTimer = null;
+        let currentSelectedCountry = null;
+        let mouseDownPos = null;
+        let mouseDownTime = null;
+
         Promise.all([
             d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
         ]).then(([worldData]) => {
@@ -249,12 +352,226 @@
 
             console.log('Loaded', countries.length, 'countries with pest data');
 
+            // Initialize interaction handlers
+            initInteraction();
+
             // Start the tour
             startTour();
         }).catch(error => {
             console.error('Error loading data:', error);
             countryNameDiv.textContent = 'Error loading data';
         });
+
+        // Helper functions
+        function clearPopup() {
+            pestListDiv.innerHTML = '';
+            countryNameDiv.textContent = '';
+            currentSelectedCountry = null;
+        }
+
+        function pauseTour() {
+            if (!tourPaused) {
+                console.log('Tour paused');
+                tourPaused = true;
+            }
+        }
+
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                console.log('Resuming tour after inactivity');
+                tourPaused = false;
+                currentSelectedCountry = null;
+            }, 7000); // 7 seconds of inactivity
+        }
+
+        async function selectCountry(country) {
+            const countryCode = idToCode[country.id];
+            if (!countryCode) return;
+
+            currentSelectedCountry = country;
+            countryNameDiv.textContent = country.properties.name;
+
+            // Calculate rotation to center the country
+            const centroid = d3.geoCentroid(country);
+            const currentRotation = projection.rotate();
+            const targetRotation = [-centroid[0], tilt - centroid[1], 0];
+
+            const iv = Versor.interpolateAngles(currentRotation, targetRotation);
+
+            // Animate rotation to center the country
+            try {
+                await d3.transition()
+                    .duration(800)
+                    .tween("render", () => t => {
+                        projection.rotate(iv(t));
+                        render(country);
+                    })
+                    .end();
+            } catch(e) {
+                console.log('Selection transition interrupted');
+            }
+
+            // Show pests for selected country
+            await showPests(countryCode);
+            resetInactivityTimer();
+        }
+
+        function initInteraction() {
+            const canvasNode = canvas.node();
+            let lastMousePos = null;
+
+            // Mouse events
+            canvasNode.addEventListener('mousedown', (event) => {
+                mouseDownPos = [event.clientX, event.clientY];
+                mouseDownTime = Date.now();
+                lastMousePos = [event.clientX, event.clientY];
+            });
+
+            canvasNode.addEventListener('mousemove', (event) => {
+                if (mouseDownPos && lastMousePos) {
+                    const [x, y] = [event.clientX, event.clientY];
+                    const [lastX, lastY] = lastMousePos;
+
+                    // Check if movement exceeds threshold
+                    const dx = x - mouseDownPos[0];
+                    const dy = y - mouseDownPos[1];
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance > 5 && !isDragging) {
+                        isDragging = true;
+                        pauseTour();
+                        clearPopup();
+                    }
+
+                    if (isDragging) {
+                        const rotation = projection.rotate();
+                        projection.rotate([
+                            rotation[0] + (x - lastX) * 0.5,
+                            rotation[1] - (y - lastY) * 0.5,
+                            rotation[2]
+                        ]);
+
+                        lastMousePos = [x, y];
+                        render();
+                        resetInactivityTimer();
+                    }
+                }
+            });
+
+            canvasNode.addEventListener('mouseup', (event) => {
+                if (isDragging) {
+                    isDragging = false;
+                    mouseDownPos = null;
+                    lastMousePos = null;
+                } else if (mouseDownPos) {
+                    // This was a click, not a drag
+                    const clickTime = Date.now() - mouseDownTime;
+                    if (clickTime < 300) { // Quick click
+                        handleClick(event);
+                    }
+                }
+                mouseDownPos = null;
+                lastMousePos = null;
+            });
+
+            canvasNode.addEventListener('mouseleave', () => {
+                isDragging = false;
+                mouseDownPos = null;
+                lastMousePos = null;
+            });
+
+            // Touch events
+            let lastTouchPos = null;
+            let touchStartPos = null;
+            let touchStartTime = null;
+
+            canvasNode.addEventListener('touchstart', (event) => {
+                event.preventDefault();
+                const touch = event.touches[0];
+                touchStartPos = [touch.clientX, touch.clientY];
+                touchStartTime = Date.now();
+                lastTouchPos = [touch.clientX, touch.clientY];
+            });
+
+            canvasNode.addEventListener('touchmove', (event) => {
+                event.preventDefault();
+                if (touchStartPos && lastTouchPos) {
+                    const touch = event.touches[0];
+                    const [x, y] = [touch.clientX, touch.clientY];
+                    const [lastX, lastY] = lastTouchPos;
+
+                    const dx = x - touchStartPos[0];
+                    const dy = y - touchStartPos[1];
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance > 5 && !isDragging) {
+                        isDragging = true;
+                        pauseTour();
+                        clearPopup();
+                    }
+
+                    if (isDragging) {
+                        const rotation = projection.rotate();
+                        projection.rotate([
+                            rotation[0] + (x - lastX) * 0.5,
+                            rotation[1] - (y - lastY) * 0.5,
+                            rotation[2]
+                        ]);
+
+                        lastTouchPos = [x, y];
+                        render();
+                        resetInactivityTimer();
+                    }
+                }
+            });
+
+            canvasNode.addEventListener('touchend', (event) => {
+                event.preventDefault();
+                if (isDragging) {
+                    isDragging = false;
+                    touchStartPos = null;
+                    lastTouchPos = null;
+                } else if (touchStartPos) {
+                    const touchTime = Date.now() - touchStartTime;
+                    if (touchTime < 300 && event.changedTouches.length > 0) {
+                        handleTouchClick(event.changedTouches[0]);
+                    }
+                }
+                touchStartPos = null;
+                lastTouchPos = null;
+            });
+        }
+
+        function handleClick(event) {
+            const rect = canvas.node().getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            const coords = projection.invert([x, y]);
+            if (!coords) return;
+
+            const clickedCountry = countries.find(c => d3.geoContains(c, coords));
+            if (clickedCountry) {
+                pauseTour();
+                selectCountry(clickedCountry);
+            }
+        }
+
+        function handleTouchClick(touch) {
+            const rect = canvas.node().getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+
+            const coords = projection.invert([x, y]);
+            if (!coords) return;
+
+            const clickedCountry = countries.find(c => d3.geoContains(c, coords));
+            if (clickedCountry) {
+                pauseTour();
+                selectCountry(clickedCountry);
+            }
+        }
 
         function render(country, arc) {
             context.clearRect(0, 0, width, height);
@@ -265,11 +582,14 @@
             context.fillStyle = "#ccc";
             context.fill();
 
-            // Draw current country (red)
-            context.beginPath();
-            path(country);
-            context.fillStyle = "#f00";
-            context.fill();
+            // Draw current country (red) - use currentSelectedCountry if available
+            const countryToHighlight = country || currentSelectedCountry;
+            if (countryToHighlight) {
+                context.beginPath();
+                path(countryToHighlight);
+                context.fillStyle = "#f00";
+                context.fill();
+            }
 
             // Draw borders (white)
             context.beginPath();
@@ -328,9 +648,17 @@
             // Infinite loop
             while (true) {
                 for (const country of countries) {
+                    // Wait if tour is paused
+                    while (tourPaused) {
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                    }
+
                     const countryCode = idToCode[country.id];
 
                     console.log('Visiting:', country.properties.name);
+
+                    // Clear any existing selection
+                    currentSelectedCountry = null;
 
                     // Update country name
                     countryNameDiv.textContent = country.properties.name;
@@ -355,6 +683,7 @@
                         await d3.transition()
                             .duration(1250)
                             .tween("render", () => t => {
+                                if (tourPaused) return; // Stop rendering if paused
                                 projection.rotate(iv(t));
                                 render(country, {type: "LineString", coordinates: [p1, ip(t)]});
                             })
@@ -363,13 +692,19 @@
                         console.log('Transition interrupted');
                     }
 
+                    // Check again if paused before showing pests
+                    if (tourPaused) continue;
+
                     // Show pests for this country
                     if (countryCode) {
                         await showPests(countryCode);
                     }
 
-                    // Wait before moving to next country
-                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    // Wait before moving to next country (check pause state during wait)
+                    for (let i = 0; i < 5; i++) {
+                        if (tourPaused) break;
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
                 }
             }
         }
