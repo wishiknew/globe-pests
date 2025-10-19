@@ -17,8 +17,8 @@ Each country entry includes:
   - Description and severity level
 
 ## Current Coverage
-- 10 countries across 6 global regions
-- 30 major agricultural pests
+- 24 countries across 9 global regions (North America, South America, East Asia, South Asia, Southeast Asia, East Africa, West Africa, North Africa, Southern Africa, Western Europe, Southern Europe, Middle East, Oceania)
+- 72 major agricultural pests (3 per country)
 - Focus on high-impact crop threats
 
 ## Severity Levels
